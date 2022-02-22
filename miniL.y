@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>  
 
-#include <string>
+#include <string.h>
 
 enum Type { Integer, Array };
 struct Symbol {
@@ -20,6 +20,7 @@ std::vector <Function> symbol_table;
 
 
 Function *get_function() {
+  // gets the symbol at the top of the stack
   int last = symbol_table.size()-1;
   return &symbol_table[last];
 }
@@ -65,6 +66,7 @@ void print_symbol_table(void) {
 struct CodeNode {
       std::string code;
       std::string name;
+      bool arr = false;
 };
 
 void yyerror(const char *msg);
@@ -119,9 +121,11 @@ extern int col;
   Declaration: Identifiers COLON INTEGER {printf("Declaration -> Identifiers COLON INTEGER\n");}
               | Identifiers COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER{printf("Declaration -> IDENTIFIER COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER\n");}  
   
-  Identifiers: Identifier {printf("Identifiers -> Identifier\n");}
+  Identifiers: Identifier {printf("Identifiers -> Identifier\n");
+              }
 
-  Identifier: IDENTIFIER {printf("Identifier -> IDENT %s\n", yylval.id_val);}
+  Identifier: IDENTIFIER {printf("Identifier -> IDENT %s\n", yylval.id_val);
+            }
   
   Statement: variable ASSIGN Expression {
                   std::string var_name = $1;
@@ -132,7 +136,8 @@ extern int col;
 
                   CodeNode *node = new CodeNode;
                   node->code = $3->code; 
-                  node->code += std::string("= ") + var_name + std::string(", ") + $3->name + std::string("\n");;
+                  node->code += std::string("= ") + var_name + std::string(", ") + $3->name + std::string("\n");
+                  node->name = var_name + std::string(", ") + $3->name;
                   $$ = node;
             }
              | IF Bool_Exp THEN Statements ENDIF {printf("Statement -> IF Bool_Exp THEN Statements ENDIF\n");}
@@ -231,7 +236,13 @@ extern int col;
                     $$ = node;
               }
 
-  Term: variable {printf("Term -> variable\n");}
+  Term: variable {
+    std::string temp;
+    std::string temp_name = create_temp();
+
+    temp += $1.code;
+
+    }
         | NUMBER {printf("Term -> NUMBER\n");}
         | L_PAREN Expression R_PAREN {printf("Term -> L_PAREN Expression R_PAREN\n");}
         | IDENTIFIER L_PAREN Expressions R_PAREN {printf("Term -> IDENTIFIER L_PAREN Expressions R_PAREN\n");}
@@ -242,14 +253,23 @@ extern int col;
   variable: IDENTIFIER {
                   CodeNode *node = new CodeNode;
                   node->code = "";
-                  node->name = $1;
+                  node->name = id_val;
                   std::string error;
                   if (!find(node->name, INTEGER, error)) {
                         yyerror(error.c_str());
                   }
                   $$ = node;
             }
-            | IDENTIFIER L_SQUARE_BRACKET Expression R_SQUARE_BRACKET {printf("variable -> IDENTIFIER L_SQUARE_BRACKET Expression R_SQUARE_BRACKET\n");}
+            | IDENTIFIER L_SQUARE_BRACKET Expression R_SQUARE_BRACKET {
+                  CodeNode *node = new CodeNode;
+                  node->code = $3.code;
+                  std::string temp = id_val;
+                  
+                  temp += std::string(", ") + std::string($3.name);
+                  node->name = temp;
+                  $$ = node;
+
+                  }
 %% 
 
 int main(int argc, char **argv) {
