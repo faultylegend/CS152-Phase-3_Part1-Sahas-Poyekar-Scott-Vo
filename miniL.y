@@ -37,6 +37,9 @@ extern int col;
 
 %token FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS END_PARAMS BEGIN_LOCALS END_LOCALS BEGIN_BODY END_BODY COLON INTEGER ARRAY L_SQUARE_BRACKET R_SQUARE_BRACKET OF ASSIGN IF THEN ENDIF ELSE WHILE BEGINLOOP ENDLOOP DO READ WRITE CONTINUE BREAK RETURN NOT EQ NEQ LT GT LTE GTE ADD L_PAREN R_PAREN COMMA SUB MULT DIV MOD TRUE FALSE IDENT NUMBER
 
+%type <expression> Function Declarations Declaration variable Expression Identifiers Expressions Bool_Exp Mult_Expr Comp Term
+%type <statement> Statement Statements 
+
 %type<num_val> NUMBER
 %type<id_val> IDENT
 
@@ -92,19 +95,41 @@ extern int col;
         | NOT Nots {printf("Nots -> NOT Nots\n");}
 
   Comp: EQ {CodeNode *node = new CodeNode;
-            node->code = "==";
-            std::string temp = create_temp();
-            node->name = temp;
+            node->code = "";
+            node->name = "== ";
+
+            $$ = node;
             }
         | NEQ {CodeNode *node = new CodeNode;
-            node->code = "!=";
-            std::string temp = create_temp();
-            node->name = temp;
+            node->code = "";
+            node->name = "!= ";
+
+            $$ = node;
             }
-        | LT {printf("Comp -> LT\n");}
-        | GT {printf("Comp -> GT\n");}
-        | LTE {printf("Comp -> LTE\n");}
-        | GTE {printf("Comp -> GTE\n");}
+        | LT {CodeNode *node = new CodeNode;
+            node->code = "";
+            node->name = "< ";
+
+            $$ = node;
+            }
+        | GT {CodeNode *node = new CodeNode;
+            node->code = "";
+            node->name = "> ";
+
+            $$ = node;
+            }
+        | LTE {CodeNode *node = new CodeNode;
+            node->code = "";
+            node->name = "<= ";
+
+            $$ = node;
+            }
+        | GTE {CodeNode *node = new CodeNode;
+            node->code = "";
+            node->name = ">= ";
+
+            $$ = node;
+            }
   
   Expression: Mult_Expr {printf("Expression -> Mult_Expr\n");}
               | Mult_Expr ADD Mult_Expr {
