@@ -3,6 +3,14 @@
 #include "miniL-parser.h"
 #include <stdio.h>
 #include <stdlib.h>  
+
+#include <string>
+
+struct CodeNode {
+      std::string code;
+      std::string name;
+};
+
 void yyerror(const char *msg);
 
 extern int yylex();
@@ -56,7 +64,18 @@ extern int col;
 
   Identifier: IDENTIFIER {printf("Identifier -> IDENT %s\n", yylval.id_val);}
   
-  Statement: variable ASSIGN Expression {printf("Statement -> variable ASSIGN Expression\n");}
+  Statement: variable ASSIGN Expression {
+                  std::string var_name = $1;
+                  std::string error;
+                  if (!find(var_name, INTEGER, error)) {
+                        yyerror(error.c_str());
+                  }
+
+                  CodeNode *node = new CodeNode;
+                  node->code = $3->code; 
+                  node->code += std::string("= ") + var_name + std::string(", ") + $3->name + std::string("\n");;
+                  $$ = node;
+            }
              | IF Bool_Exp THEN Statements ENDIF {printf("Statement -> IF Bool_Exp THEN Statements ENDIF\n");}
              | IF Bool_Exp THEN Statements ELSE Statements ENDIF {printf("Statement -> IF Bool_Exp THEN Statements ELSE Statements ENDIF\n");}
              | WHILE Bool_Exp BEGINLOOP Statements ENDLOOP {printf("Statement -> WHILE Bool_Exp BEGINLOOP Statements ENDLOOP\n");}
@@ -80,13 +99,48 @@ extern int col;
         | GTE {printf("Comp -> GTE\n");}
   
   Expression: Mult_Expr {printf("Expression -> Mult_Expr\n");}
-              | Mult_Expr ADD Mult_Expr {printf("Expression -> Mult_Expr ADD Mult_Expr\n");}
-              | Mult_Expr SUB Mult_Expr {printf("Expression -> Mult_Expr SUB Mult_Expr\n");}
+              | Mult_Expr ADD Mult_Expr {
+                    std::string temp = create_temp();
+                    CodeNode *node = new CodeNode;
+                    node->code = $1->code + $3->code + decl_temp_code(temp);
+                    node->code += std::string("+ ") + temp + std::strings(", ") + $1->name + std::string(", ") + $3->name + std::string("\n");
+                    node->name = temp;
+                    $$ = node;
+              }
+              | Mult_Expr SUB Mult_Expr {
+                    std::string temp = create_temp();
+                    CodeNode *node = new CodeNode;
+                    node->code = $1->code + $3->code + decl_temp_code(temp);
+                    node->code += std::string("- ") + temp + std::strings(", ") + $1->name + std::string(", ") + $3->name + std::string("\n");
+                    node->name = temp;
+                    $$ = node;
+              }
   
   Mult_Expr: Term {printf("Mult_Expr -> Term\n");}
-             | Term MULT Term {printf("Mult_Expr -> Term MULT Term\n");}
-             | Term DIV Term {printf("Mult_Expr -> Term DIV Term\n");}
-             | Term MOD Term {printf("Mult_Expr -> Term MOD Term\n");}
+             | Term MULT Term {
+                    std::string temp = create_temp();
+                    CodeNode *node = new CodeNode;
+                    node->code = $1->code + $3->code + decl_temp_code(temp);
+                    node->code += std::string("* ") + temp + std::strings(", ") + $1->name + std::string(", ") + $3->name + std::string("\n");
+                    node->name = temp;
+                    $$ = node;
+              }
+             | Term DIV Term {
+                    std::string temp = create_temp();
+                    CodeNode *node = new CodeNode;
+                    node->code = $1->code + $3->code + decl_temp_code(temp);
+                    node->code += std::string("/ ") + temp + std::strings(", ") + $1->name + std::string(", ") + $3->name + std::string("\n");
+                    node->name = temp;
+                    $$ = node;
+              }
+             | Term MOD Term {
+                    std::string temp = create_temp();
+                    CodeNode *node = new CodeNode;
+                    node->code = $1->code + $3->code + decl_temp_code(temp);
+                    node->code += std::string("% ") + temp + std::strings(", ") + $1->name + std::string(", ") + $3->name + std::string("\n");
+                    node->name = temp;
+                    $$ = node;
+              }
 
   Term: variable {printf("Term -> variable\n");}
         | NUMBER {printf("Term -> NUMBER\n");}
@@ -96,7 +150,16 @@ extern int col;
   Expressions: Expression {printf("Expressions -> Expression\n");}
               | Expression COMMA Expressions {printf("Expressions -> Expression COMMA Expressions\n");}
 
-  variable: IDENTIFIER {printf("variable -> IDENTIFIER\n");}
+  variable: IDENTIFIER {
+                  CodeNode *node = new CodeNode;
+                  node->code = "";
+                  node->name = $1;
+                  std::string error;
+                  if (!find(node->name, INTEGER, error)) {
+                        yyerror(error.c_str());
+                  }
+                  $$ = node;
+            }
             | IDENTIFIER L_SQUARE_BRACKET Expression R_SQUARE_BRACKET {printf("variable -> IDENTIFIER L_SQUARE_BRACKET Expression R_SQUARE_BRACKET\n");}
 %% 
 
