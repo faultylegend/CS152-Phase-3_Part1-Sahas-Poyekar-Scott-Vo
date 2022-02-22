@@ -91,8 +91,16 @@ extern int col;
   Nots:  {printf("Nots -> epsilon\n");}
         | NOT Nots {printf("Nots -> NOT Nots\n");}
 
-  Comp: EQ {printf("Comp -> EQ\n");}
-        | NEQ {printf("Comp -> NEQ\n");}
+  Comp: EQ {CodeNode *node = new CodeNode;
+            node->code = "==";
+            std::string temp = create_temp();
+            node->name = temp;
+            }
+        | NEQ {CodeNode *node = new CodeNode;
+            node->code = "!=";
+            std::string temp = create_temp();
+            node->name = temp;
+            }
         | LT {printf("Comp -> LT\n");}
         | GT {printf("Comp -> GT\n");}
         | LTE {printf("Comp -> LTE\n");}
