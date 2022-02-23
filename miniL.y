@@ -116,26 +116,76 @@ extern int col;
 %% 
 
   /* write your rules here */
-  program: Functions {printf("program -> functions\n");}
+  program: Functions {printf("program -> functions\n");
+    CodeNode* node = new CodeNode;
+
+    node->code = $1->code;
+    node->name = std::string("main");
+
+    $$ = node;
+  }
  
-  Functions : {printf("Functions -> epsilon\n");}
+  Functions : {printf("Functions -> epsilon\n");
+            CodeNode *node = new CodeNode;
+            node->code = "";
+            node->name = "empty_functions";
+
+            $$ = node;}
         | Function Functions {printf("Functions -> Function Functions\n");}
 
   Function: FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS Declarations END_PARAMS BEGIN_LOCALS Declarations END_LOCALS BEGIN_BODY Statements END_BODY {printf("Function -> FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS Declarations END_PARAMS BEGIN_LOCALS Declarations END_LOCALS BEGIN_BODY Statements END_BODY\n");}
 
-  Declarations:  {printf("Declarations -> epsilon\n");}
-        | Declaration SEMICOLON Declarations {printf("Declarations -> Declaration SEMICOLON Declarations\n");}
+  Declarations:  {printf("Declarations -> epsilon\n");
+          CodeNode *node = new CodeNode;
+          node->code = "";
+          node->name = "empty_declarations";
 
-  Statements: {printf("Statements -> Epsilon\n");}
-              | Statement SEMICOLON Statements {printf("Statements -> Statement SEMICOLON Statements\n");}
+          $$ = node;
+        }
+        | Declaration SEMICOLON Declarations {printf("Declarations -> Declaration SEMICOLON Declarations\n");
+          CodeNode *node = new CodeNode;
+          node->code = $1->code + std::string("\n ") + $3->code;
+          node->name = std::string("Declarations starting with ") + $1->name;
+
+          $$ = node;
+        }
+
+  Statements: {printf("Statements -> Epsilon\n");
+          CodeNode *node = new CodeNode;
+          node->code = "";
+          node->name = "empty_statements";
+
+          $$ = node;}
+              | Statement SEMICOLON Statements {printf("Statements -> Statement SEMICOLON Statements\n");
+          CodeNode *node = new CodeNode;
+          node->code = $1->code + std::string("\n ") + $3->code;
+          node->name = std::string("Statements starting with ") + $1->name;
+
+          $$ = node;
+          }
             
-  Declaration: Identifiers COLON INTEGER {printf("Declaration -> Identifiers COLON INTEGER\n");}
+  Declaration: Identifiers COLON INTEGER {printf("Declaration -> Identifiers COLON INTEGER\n");
+    CodeNode *node = new CodeNode;
+    node->code = ". " + $1->name + "\n= " + $1->name + ", " + $3->code;
+    node->name = "Dec_" + $1->name;
+
+    $$ = node;
+  }
               | Identifiers COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER{printf("Declaration -> IDENTIFIER COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER\n");}  
   
   Identifiers: Identifier {printf("Identifiers -> Identifier\n");
+                  $$ = $1;
               }
 
   Identifier: IDENTIFIER {printf("Identifier -> IDENT %s\n", yylval.id_val);
+                  CodeNode *node = new CodeNode;
+                  node->code = "";
+                  node->name = yylval.id_val;
+                  std::string error;
+                  if (!find(node->name, INTEGER, error)) {
+                        yyerror(error.c_str());
+                  }
+                  $$ = node;
             }
   
   Statement: variable ASSIGN Expression {
@@ -151,20 +201,75 @@ extern int col;
                   node->name = var_name;
                   $$ = node;
             }
-             | IF Bool_Exp THEN Statements ENDIF {printf("Statement -> IF Bool_Exp THEN Statements ENDIF\n");}
+             | IF Bool_Exp THEN Statements ENDIF {printf("Statement -> IF Bool_Exp THEN Statements ENDIF\n");
+              
+             }
              | IF Bool_Exp THEN Statements ELSE Statements ENDIF {printf("Statement -> IF Bool_Exp THEN Statements ELSE Statements ENDIF\n");}
              | WHILE Bool_Exp BEGINLOOP Statements ENDLOOP {printf("Statement -> WHILE Bool_Exp BEGINLOOP Statements ENDLOOP\n");}
              | DO BEGINLOOP Statements ENDLOOP WHILE Bool_Exp {printf("Statement -> DO BEGINLOOP Statements ENDLOOP WHILE Bool_Exp\n");}
-             | READ variable {printf("Statement -> READ variable\n");}
-             | WRITE variable {printf("Statement -> WRITE variable\n");}
-             | CONTINUE {printf("Statement -> CONTINUE\n");}
-             | BREAK {printf("Statement -> BREAK\n");}
-             | RETURN Expression {printf("Statement -> RETURN Expression\n");}
+             | READ variable {
+                  CodeNode *node = new CodeNode;
+                  std::string var = $2->name;
+                  if ($2->type == false){
+                      node->code = std::string(".< ") + $2->name;
+                  }
+                  else {
+                      node->code = std::string(".[]< ") + $2->name " + std::string(",") + $2->code;
+                  }
+                  $$ = node;
+                  
+             }
+             | WRITE variable {
+                  CodeNode *node = new CodeNode;
+                  std::string var = $2->name;
+                  if ($2->type == false){
+                      node->code = std::string(".> ") + $2->name;
+                  }
+                  else {
+                      node->code = std::string(".[]> ") + $2->name " + std::string(",") + $2->code;
+                  }
+                  $$ = node;
+             }
+             
+             | CONTINUE {
+              CodeNode *node = new CodeNode;
+              node->code = "";
+              node->name = std::string("continue");
+
+              $$ = node;
+             
+               }
+             | BREAK {
+               CodeNode *node = new CodeNode;
+               node->code = "";
+               node->name = std::string("break");
+
+               $$ = node;
+             }
+             | RETURN Expression {
+               CodeNode *node = new CodeNode;
+               node->code = "";
+               node->name = std::string("ret") + $1->name;
+
+               $$ = node;
+             }
   
   Bool_Exp: {printf("boolexp flag\n");} Nots Expression Comp Expression {printf("Bool_Exp -> Nots Expression Comp Expression\n");}
 
-  Nots:  {printf("Nots -> epsilon\n");}
-        | NOT Nots {printf("Nots -> NOT Nots\n");}
+  Nots:  {printf("Nots -> epsilon\n");
+            CodeNode *node = new CodeNode;
+            node->code = "";
+            node->name = "empty_not";
+
+            $$ = node;
+          }
+        | NOT Nots {printf("Nots -> NOT Nots\n");
+          CodeNode *node = new CodeNode;
+          node->code = std::string("!") + Nots->code;
+          node->name = std::string("nots");
+
+          $$ = node;
+        }
 
   Comp: EQ {CodeNode *node = new CodeNode;
             node->code = "";
@@ -255,12 +360,41 @@ extern int col;
     add_variable_to_symbol_table(temp,$1->type);
 
     }
-        | NUMBER {printf("Term -> NUMBER\n");}
-        | L_PAREN Expression R_PAREN {printf("Term -> L_PAREN Expression R_PAREN\n");}
-        | IDENTIFIER L_PAREN Expressions R_PAREN {printf("Term -> IDENTIFIER L_PAREN Expressions R_PAREN\n");}
+        | NUMBER {printf("Term -> NUMBER\n");
+          CodeNode *node = new CodeNode;
+          node->code = itoa(yylval.num_val);
+          node->name = itoa(yylval.num_val);
+        }
+        | L_PAREN Expression R_PAREN {printf("Term -> L_PAREN Expression R_PAREN\n");
+          CodeNode *node = new CodeNode;
+          node->code = $2->code;
+          node->name = $2->name;
+          $$ = node;
 
-  Expressions: Expression {printf("Expressions -> Expression\n");}
-              | Expression COMMA Expressions {printf("Expressions -> Expression COMMA Expressions\n");}
+        }
+        | IDENTIFIER L_PAREN Expressions R_PAREN {printf("Term -> IDENTIFIER L_PAREN Expressions R_PAREN\n");
+          CodeNode *node = new CodeNode;
+          node->code = $3->code;
+          node->name = yylval.id_val;
+
+          $$ = node;
+        }
+
+  Expressions: Expression {
+      printf("Expressions -> Expression\n");
+      $$ = $1;
+    }
+              | Expression COMMA Expressions {
+                printf("Expressions -> Expression COMMA Expressions\n");
+                std::string code_temp;
+                std::string name_temp;
+
+                code_temp += $1->code + std::string(", ") + $3->code + std::string("\n");
+                name_temp += $1->name + std::string(", ") + $3->name + std::string("\n");
+
+                $$ = node;
+
+              }
 
   variable: IDENTIFIER {
                   CodeNode *node = new CodeNode;
