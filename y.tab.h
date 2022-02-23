@@ -104,7 +104,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 82 "miniL.y"
+#line 88 "miniL.y"
 
   /* put your types here */
   int num_val;

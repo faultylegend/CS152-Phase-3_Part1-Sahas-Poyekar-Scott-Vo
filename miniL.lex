@@ -86,7 +86,7 @@ COMMENT {.}*
                      }
 
 {IDENTIFIER} {col += yyleng; yylval.id_val=malloc(yyleng+1); strcpy(yylval.id_val, yytext); return IDENTIFIER;} 
-{DIGIT}+     {col += yyleng; yylval.num_val = atoi(yytext); return NUMBER;} 
+{DIGIT}+     {col += yyleng; yylval.num_val = (int)atoi((char*)yytext); return NUMBER;} 
 
 
 " "   col++;

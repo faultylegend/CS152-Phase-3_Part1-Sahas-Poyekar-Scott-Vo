@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>  
 
+#include <string>
 #include <string.h>
+#include <vector>
 
 enum Type { Integer, Array };
 struct Symbol {
@@ -62,11 +64,16 @@ void print_symbol_table(void) {
   printf("--------------------\n");
 }
 
+std::string output_string;
 
 struct CodeNode {
       std::string code;
       std::string name;
       bool arr = false;
+      
+      ~CodeNode(){
+            //write to
+      }
 };
 
 void yyerror(const char *msg);
@@ -137,7 +144,7 @@ extern int col;
                   CodeNode *node = new CodeNode;
                   node->code = $3->code; 
                   node->code += std::string("= ") + var_name + std::string(", ") + $3->name + std::string("\n");
-                  node->name = var_name + std::string(", ") + $3->name;
+                  node->name = var_name;
                   $$ = node;
             }
              | IF Bool_Exp THEN Statements ENDIF {printf("Statement -> IF Bool_Exp THEN Statements ENDIF\n");}
@@ -168,7 +175,7 @@ extern int col;
             $$ = node;
             }
         | LT {CodeNode *node = new CodeNode;
-            node->code = "";
+            node->code = "< ";
             node->name = "< ";
 
             $$ = node;
@@ -240,7 +247,8 @@ extern int col;
     std::string temp;
     std::string temp_name = create_temp();
 
-    temp += $1.code;
+    temp += $1->code;
+    add_variable_to_symbol_table(temp,$1->type);
 
     }
         | NUMBER {printf("Term -> NUMBER\n");}

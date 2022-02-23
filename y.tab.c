@@ -72,7 +72,9 @@
 #include <stdio.h>
 #include <stdlib.h>  
 
+#include <string>
 #include <string.h>
+#include <vector>
 
 enum Type { Integer, Array };
 struct Symbol {
@@ -135,6 +137,10 @@ struct CodeNode {
       std::string code;
       std::string name;
       bool arr = false;
+      
+      ~CodeNode(){
+            //write to
+      }
 };
 
 void yyerror(const char *msg);
@@ -144,7 +150,7 @@ extern int line;
 extern int col;
 
 
-#line 148 "y.tab.c"
+#line 154 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -247,7 +253,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 82 "miniL.y"
+#line 88 "miniL.y"
 
   /* put your types here */
   int num_val;
@@ -255,7 +261,7 @@ union YYSTYPE
   int line_val;
   int col_val;
 
-#line 259 "y.tab.c"
+#line 265 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -652,11 +658,11 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   108,   108,   110,   111,   113,   115,   116,   118,   119,
-     121,   122,   124,   127,   130,   143,   144,   145,   146,   147,
-     148,   149,   150,   151,   153,   153,   155,   156,   158,   164,
-     170,   176,   182,   188,   195,   196,   204,   213,   214,   222,
-     230,   239,   246,   247,   248,   250,   251,   253,   263
+       0,   114,   114,   116,   117,   119,   121,   122,   124,   125,
+     127,   128,   130,   133,   136,   149,   150,   151,   152,   153,
+     154,   155,   156,   157,   159,   159,   161,   162,   164,   170,
+     176,   182,   188,   194,   201,   202,   210,   219,   220,   228,
+     236,   245,   252,   253,   254,   256,   257,   259,   269
 };
 #endif
 
@@ -1608,81 +1614,81 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 108 "miniL.y"
+#line 114 "miniL.y"
                      {printf("program -> functions\n");}
-#line 1614 "y.tab.c"
-    break;
-
-  case 3:
-#line 110 "miniL.y"
-              {printf("Functions -> epsilon\n");}
 #line 1620 "y.tab.c"
     break;
 
-  case 4:
-#line 111 "miniL.y"
-                             {printf("Functions -> Function Functions\n");}
+  case 3:
+#line 116 "miniL.y"
+              {printf("Functions -> epsilon\n");}
 #line 1626 "y.tab.c"
     break;
 
-  case 5:
-#line 113 "miniL.y"
-                                                                                                                                                   {printf("Function -> FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS Declarations END_PARAMS BEGIN_LOCALS Declarations END_LOCALS BEGIN_BODY Statements END_BODY\n");}
+  case 4:
+#line 117 "miniL.y"
+                             {printf("Functions -> Function Functions\n");}
 #line 1632 "y.tab.c"
     break;
 
-  case 6:
-#line 115 "miniL.y"
-                 {printf("Declarations -> epsilon\n");}
+  case 5:
+#line 119 "miniL.y"
+                                                                                                                                                   {printf("Function -> FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS Declarations END_PARAMS BEGIN_LOCALS Declarations END_LOCALS BEGIN_BODY Statements END_BODY\n");}
 #line 1638 "y.tab.c"
     break;
 
-  case 7:
-#line 116 "miniL.y"
-                                             {printf("Declarations -> Declaration SEMICOLON Declarations\n");}
+  case 6:
+#line 121 "miniL.y"
+                 {printf("Declarations -> epsilon\n");}
 #line 1644 "y.tab.c"
     break;
 
-  case 8:
-#line 118 "miniL.y"
-              {printf("Statements -> Epsilon\n");}
+  case 7:
+#line 122 "miniL.y"
+                                             {printf("Declarations -> Declaration SEMICOLON Declarations\n");}
 #line 1650 "y.tab.c"
     break;
 
-  case 9:
-#line 119 "miniL.y"
-                                               {printf("Statements -> Statement SEMICOLON Statements\n");}
+  case 8:
+#line 124 "miniL.y"
+              {printf("Statements -> Epsilon\n");}
 #line 1656 "y.tab.c"
     break;
 
-  case 10:
-#line 121 "miniL.y"
-                                         {printf("Declaration -> Identifiers COLON INTEGER\n");}
+  case 9:
+#line 125 "miniL.y"
+                                               {printf("Statements -> Statement SEMICOLON Statements\n");}
 #line 1662 "y.tab.c"
     break;
 
-  case 11:
-#line 122 "miniL.y"
-                                                                                           {printf("Declaration -> IDENTIFIER COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER\n");}
+  case 10:
+#line 127 "miniL.y"
+                                         {printf("Declaration -> Identifiers COLON INTEGER\n");}
 #line 1668 "y.tab.c"
     break;
 
+  case 11:
+#line 128 "miniL.y"
+                                                                                           {printf("Declaration -> IDENTIFIER COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER\n");}
+#line 1674 "y.tab.c"
+    break;
+
   case 12:
-#line 124 "miniL.y"
+#line 130 "miniL.y"
                           {printf("Identifiers -> Identifier\n");
               }
-#line 1675 "y.tab.c"
+#line 1681 "y.tab.c"
     break;
 
   case 13:
-#line 127 "miniL.y"
+#line 133 "miniL.y"
                          {printf("Identifier -> IDENT %s\n", yylval.id_val);
             }
-#line 1682 "y.tab.c"
+#line 1688 "y.tab.c"
     break;
 
   case 14:
-#line 130 "miniL.y"
+#line 136 "miniL.y"
                                         {
                   std::string var_name = (yyvsp[-2].expression);
                   std::string error;
@@ -1693,164 +1699,164 @@ yyreduce:
                   CodeNode *node = new CodeNode;
                   node->code = (yyvsp[0].expression)->code; 
                   node->code += std::string("= ") + var_name + std::string(", ") + (yyvsp[0].expression)->name + std::string("\n");
-                  node->name = var_name + std::string(", ") + (yyvsp[0].expression)->name;
+                  node->name = var_name;
                   (yyval.statement) = node;
             }
-#line 1700 "y.tab.c"
-    break;
-
-  case 15:
-#line 143 "miniL.y"
-                                                 {printf("Statement -> IF Bool_Exp THEN Statements ENDIF\n");}
 #line 1706 "y.tab.c"
     break;
 
-  case 16:
-#line 144 "miniL.y"
-                                                                 {printf("Statement -> IF Bool_Exp THEN Statements ELSE Statements ENDIF\n");}
+  case 15:
+#line 149 "miniL.y"
+                                                 {printf("Statement -> IF Bool_Exp THEN Statements ENDIF\n");}
 #line 1712 "y.tab.c"
     break;
 
-  case 17:
-#line 145 "miniL.y"
-                                                           {printf("Statement -> WHILE Bool_Exp BEGINLOOP Statements ENDLOOP\n");}
+  case 16:
+#line 150 "miniL.y"
+                                                                 {printf("Statement -> IF Bool_Exp THEN Statements ELSE Statements ENDIF\n");}
 #line 1718 "y.tab.c"
     break;
 
-  case 18:
-#line 146 "miniL.y"
-                                                              {printf("Statement -> DO BEGINLOOP Statements ENDLOOP WHILE Bool_Exp\n");}
+  case 17:
+#line 151 "miniL.y"
+                                                           {printf("Statement -> WHILE Bool_Exp BEGINLOOP Statements ENDLOOP\n");}
 #line 1724 "y.tab.c"
     break;
 
-  case 19:
-#line 147 "miniL.y"
-                             {printf("Statement -> READ variable\n");}
+  case 18:
+#line 152 "miniL.y"
+                                                              {printf("Statement -> DO BEGINLOOP Statements ENDLOOP WHILE Bool_Exp\n");}
 #line 1730 "y.tab.c"
     break;
 
-  case 20:
-#line 148 "miniL.y"
-                              {printf("Statement -> WRITE variable\n");}
+  case 19:
+#line 153 "miniL.y"
+                             {printf("Statement -> READ variable\n");}
 #line 1736 "y.tab.c"
     break;
 
-  case 21:
-#line 149 "miniL.y"
-                        {printf("Statement -> CONTINUE\n");}
+  case 20:
+#line 154 "miniL.y"
+                              {printf("Statement -> WRITE variable\n");}
 #line 1742 "y.tab.c"
     break;
 
-  case 22:
-#line 150 "miniL.y"
-                     {printf("Statement -> BREAK\n");}
+  case 21:
+#line 155 "miniL.y"
+                        {printf("Statement -> CONTINUE\n");}
 #line 1748 "y.tab.c"
     break;
 
-  case 23:
-#line 151 "miniL.y"
-                                 {printf("Statement -> RETURN Expression\n");}
+  case 22:
+#line 156 "miniL.y"
+                     {printf("Statement -> BREAK\n");}
 #line 1754 "y.tab.c"
     break;
 
-  case 24:
-#line 153 "miniL.y"
-            {printf("boolexp flag\n");}
+  case 23:
+#line 157 "miniL.y"
+                                 {printf("Statement -> RETURN Expression\n");}
 #line 1760 "y.tab.c"
     break;
 
-  case 25:
-#line 153 "miniL.y"
-                                                                        {printf("Bool_Exp -> Nots Expression Comp Expression\n");}
+  case 24:
+#line 159 "miniL.y"
+            {printf("boolexp flag\n");}
 #line 1766 "y.tab.c"
     break;
 
-  case 26:
-#line 155 "miniL.y"
-         {printf("Nots -> epsilon\n");}
+  case 25:
+#line 159 "miniL.y"
+                                                                        {printf("Bool_Exp -> Nots Expression Comp Expression\n");}
 #line 1772 "y.tab.c"
     break;
 
-  case 27:
-#line 156 "miniL.y"
-                   {printf("Nots -> NOT Nots\n");}
+  case 26:
+#line 161 "miniL.y"
+         {printf("Nots -> epsilon\n");}
 #line 1778 "y.tab.c"
     break;
 
+  case 27:
+#line 162 "miniL.y"
+                   {printf("Nots -> NOT Nots\n");}
+#line 1784 "y.tab.c"
+    break;
+
   case 28:
-#line 158 "miniL.y"
+#line 164 "miniL.y"
            {CodeNode *node = new CodeNode;
             node->code = "";
             node->name = "== ";
 
             (yyval.expression) = node;
             }
-#line 1789 "y.tab.c"
+#line 1795 "y.tab.c"
     break;
 
   case 29:
-#line 164 "miniL.y"
+#line 170 "miniL.y"
               {CodeNode *node = new CodeNode;
             node->code = "";
             node->name = "!= ";
 
             (yyval.expression) = node;
             }
-#line 1800 "y.tab.c"
+#line 1806 "y.tab.c"
     break;
 
   case 30:
-#line 170 "miniL.y"
+#line 176 "miniL.y"
              {CodeNode *node = new CodeNode;
-            node->code = "";
+            node->code = "< ";
             node->name = "< ";
 
             (yyval.expression) = node;
             }
-#line 1811 "y.tab.c"
+#line 1817 "y.tab.c"
     break;
 
   case 31:
-#line 176 "miniL.y"
+#line 182 "miniL.y"
              {CodeNode *node = new CodeNode;
             node->code = "";
             node->name = "> ";
 
             (yyval.expression) = node;
             }
-#line 1822 "y.tab.c"
+#line 1828 "y.tab.c"
     break;
 
   case 32:
-#line 182 "miniL.y"
+#line 188 "miniL.y"
               {CodeNode *node = new CodeNode;
             node->code = "";
             node->name = "<= ";
 
             (yyval.expression) = node;
             }
-#line 1833 "y.tab.c"
+#line 1839 "y.tab.c"
     break;
 
   case 33:
-#line 188 "miniL.y"
+#line 194 "miniL.y"
               {CodeNode *node = new CodeNode;
             node->code = "";
             node->name = ">= ";
 
             (yyval.expression) = node;
             }
-#line 1844 "y.tab.c"
-    break;
-
-  case 34:
-#line 195 "miniL.y"
-                        {printf("Expression -> Mult_Expr\n");}
 #line 1850 "y.tab.c"
     break;
 
+  case 34:
+#line 201 "miniL.y"
+                        {printf("Expression -> Mult_Expr\n");}
+#line 1856 "y.tab.c"
+    break;
+
   case 35:
-#line 196 "miniL.y"
+#line 202 "miniL.y"
                                         {
                     std::string temp = create_temp();
                     CodeNode *node = new CodeNode;
@@ -1859,11 +1865,11 @@ yyreduce:
                     node->name = temp;
                     (yyval.expression) = node;
               }
-#line 1863 "y.tab.c"
+#line 1869 "y.tab.c"
     break;
 
   case 36:
-#line 204 "miniL.y"
+#line 210 "miniL.y"
                                         {
                     std::string temp = create_temp();
                     CodeNode *node = new CodeNode;
@@ -1872,17 +1878,17 @@ yyreduce:
                     node->name = temp;
                     (yyval.expression) = node;
               }
-#line 1876 "y.tab.c"
-    break;
-
-  case 37:
-#line 213 "miniL.y"
-                  {printf("Mult_Expr -> Term\n");}
 #line 1882 "y.tab.c"
     break;
 
+  case 37:
+#line 219 "miniL.y"
+                  {printf("Mult_Expr -> Term\n");}
+#line 1888 "y.tab.c"
+    break;
+
   case 38:
-#line 214 "miniL.y"
+#line 220 "miniL.y"
                               {
                     std::string temp = create_temp();
                     CodeNode *node = new CodeNode;
@@ -1891,11 +1897,11 @@ yyreduce:
                     node->name = temp;
                     (yyval.expression) = node;
               }
-#line 1895 "y.tab.c"
+#line 1901 "y.tab.c"
     break;
 
   case 39:
-#line 222 "miniL.y"
+#line 228 "miniL.y"
                              {
                     std::string temp = create_temp();
                     CodeNode *node = new CodeNode;
@@ -1904,11 +1910,11 @@ yyreduce:
                     node->name = temp;
                     (yyval.expression) = node;
               }
-#line 1908 "y.tab.c"
+#line 1914 "y.tab.c"
     break;
 
   case 40:
-#line 230 "miniL.y"
+#line 236 "miniL.y"
                              {
                     std::string temp = create_temp();
                     CodeNode *node = new CodeNode;
@@ -1917,11 +1923,11 @@ yyreduce:
                     node->name = temp;
                     (yyval.expression) = node;
               }
-#line 1921 "y.tab.c"
+#line 1927 "y.tab.c"
     break;
 
   case 41:
-#line 239 "miniL.y"
+#line 245 "miniL.y"
                  {
     std::string temp;
     std::string temp_name = create_temp();
@@ -1929,41 +1935,41 @@ yyreduce:
     temp += (yyvsp[0].expression).code;
 
     }
-#line 1933 "y.tab.c"
-    break;
-
-  case 42:
-#line 246 "miniL.y"
-                 {printf("Term -> NUMBER\n");}
 #line 1939 "y.tab.c"
     break;
 
-  case 43:
-#line 247 "miniL.y"
-                                     {printf("Term -> L_PAREN Expression R_PAREN\n");}
+  case 42:
+#line 252 "miniL.y"
+                 {printf("Term -> NUMBER\n");}
 #line 1945 "y.tab.c"
     break;
 
-  case 44:
-#line 248 "miniL.y"
-                                                 {printf("Term -> IDENTIFIER L_PAREN Expressions R_PAREN\n");}
+  case 43:
+#line 253 "miniL.y"
+                                     {printf("Term -> L_PAREN Expression R_PAREN\n");}
 #line 1951 "y.tab.c"
     break;
 
-  case 45:
-#line 250 "miniL.y"
-                          {printf("Expressions -> Expression\n");}
+  case 44:
+#line 254 "miniL.y"
+                                                 {printf("Term -> IDENTIFIER L_PAREN Expressions R_PAREN\n");}
 #line 1957 "y.tab.c"
     break;
 
-  case 46:
-#line 251 "miniL.y"
-                                             {printf("Expressions -> Expression COMMA Expressions\n");}
+  case 45:
+#line 256 "miniL.y"
+                          {printf("Expressions -> Expression\n");}
 #line 1963 "y.tab.c"
     break;
 
+  case 46:
+#line 257 "miniL.y"
+                                             {printf("Expressions -> Expression COMMA Expressions\n");}
+#line 1969 "y.tab.c"
+    break;
+
   case 47:
-#line 253 "miniL.y"
+#line 259 "miniL.y"
                        {
                   CodeNode *node = new CodeNode;
                   node->code = "";
@@ -1974,11 +1980,11 @@ yyreduce:
                   }
                   (yyval.expression) = node;
             }
-#line 1978 "y.tab.c"
+#line 1984 "y.tab.c"
     break;
 
   case 48:
-#line 263 "miniL.y"
+#line 269 "miniL.y"
                                                                       {
                   CodeNode *node = new CodeNode;
                   node->code = (yyvsp[-1].expression).code;
@@ -1989,11 +1995,11 @@ yyreduce:
                   (yyval.expression) = node;
 
                   }
-#line 1993 "y.tab.c"
+#line 1999 "y.tab.c"
     break;
 
 
-#line 1997 "y.tab.c"
+#line 2003 "y.tab.c"
 
       default: break;
     }
@@ -2231,7 +2237,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 273 "miniL.y"
+#line 279 "miniL.y"
  
 
 int main(int argc, char **argv) {

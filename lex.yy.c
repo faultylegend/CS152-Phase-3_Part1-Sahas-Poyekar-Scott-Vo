@@ -1115,7 +1115,7 @@ YY_RULE_SETUP
 case 51:
 YY_RULE_SETUP
 #line 90 "miniL.lex"
-{col += yyleng; yylval.num_val = atoi(yytext); return NUMBER;} 
+{col += yyleng; yylval.num_val = (int)atoi((char*)yytext); return NUMBER;} 
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
