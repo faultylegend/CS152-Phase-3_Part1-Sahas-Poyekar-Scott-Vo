@@ -92,6 +92,8 @@ extern int col;
   char* id_val;
   int line_val;
   int col_val;
+  struct Function func;
+  struct Symbol symb;
 }
 
 %define parse.error verbose
@@ -102,8 +104,10 @@ extern int col;
 
 %token FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS END_PARAMS BEGIN_LOCALS END_LOCALS BEGIN_BODY END_BODY COLON INTEGER ARRAY L_SQUARE_BRACKET R_SQUARE_BRACKET OF ASSIGN IF THEN ENDIF ELSE WHILE BEGINLOOP ENDLOOP DO READ WRITE CONTINUE BREAK RETURN NOT EQ NEQ LT GT LTE GTE ADD L_PAREN R_PAREN COMMA SUB MULT DIV MOD TRUE FALSE IDENT NUMBER
 
-%type <expression> Function Declarations Declaration variable Expression Identifiers Expressions Bool_Exp Mult_Expr Comp Term
-%type <statement> Statement Statements 
+%token <code_node> CODE
+
+%type <symb> Function Declarations Declaration variable Expression Identifiers Expressions Bool_Exp Mult_Expr Comp Term
+%type <func> Statement Statements 
 
 %type<num_val> NUMBER
 %type<id_val> IDENT
@@ -137,7 +141,7 @@ extern int col;
   Statement: variable ASSIGN Expression {
                   std::string var_name = $1;
                   std::string error;
-                  if (!find(var_name, INTEGER, error)) {
+                  if (!find(var_name)) {
                         yyerror(error.c_str());
                   }
 
@@ -261,7 +265,7 @@ extern int col;
   variable: IDENTIFIER {
                   CodeNode *node = new CodeNode;
                   node->code = "";
-                  node->name = id_val;
+                  node->name = yylval.id_val;
                   std::string error;
                   if (!find(node->name, INTEGER, error)) {
                         yyerror(error.c_str());
@@ -271,7 +275,7 @@ extern int col;
             | IDENTIFIER L_SQUARE_BRACKET Expression R_SQUARE_BRACKET {
                   CodeNode *node = new CodeNode;
                   node->code = $3.code;
-                  std::string temp = id_val;
+                  std::string temp = yylval.id_val;
                   
                   temp += std::string(", ") + std::string($3.name);
                   node->name = temp;
