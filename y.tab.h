@@ -96,8 +96,7 @@ extern int yydebug;
     TRUE = 302,
     FALSE = 303,
     IDENT = 304,
-    NUMBER = 305,
-    CODE = 306
+    NUMBER = 305
   };
 #endif
 
@@ -105,17 +104,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 89 "miniL.y"
+#line 16 "miniL.y"
 
   /* put your types here */
   int num_val;
-  char* id_val;
+  char* op_val;
   int line_val;
   int col_val;
-  struct Function func;
-  struct Symbol symb;
 
-#line 119 "y.tab.h"
+#line 116 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -1110,12 +1110,12 @@ YY_RULE_SETUP
 case 50:
 YY_RULE_SETUP
 #line 89 "miniL.lex"
-{col += yyleng; yylval.id_val=malloc(yyleng+1); strcpy(yylval.id_val, yytext); return IDENTIFIER;} 
+{col += yyleng; char * token = new char[yyleng]; strcpy(token, yytext); yylval.op_val = token; return IDENTIFIER;} 
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 90 "miniL.lex"
-{col += yyleng; yylval.num_val = (int)atoi((char*)yytext); return NUMBER;} 
+{col += yyleng; char * token = new char[yyleng]; strcpy(token, yytext); yylval.op_val = token; return NUMBER;} 
 	YY_BREAK
 case 52:
 YY_RULE_SETUP

@@ -71,79 +71,6 @@
 #include "miniL-parser.h"
 #include <stdio.h>
 #include <stdlib.h>  
-
-#include <string>
-#include <string.h>
-#include <vector>
-
-enum Type { Integer, Array };
-struct Symbol {
-  std::string name;
-  Type type;
-};
-struct Function {
-  std::string name;
-  std::vector<Symbol> declarations;
-};
-
-std::vector <Function> symbol_table;
-
-
-Function *get_function() {
-  // gets the symbol at the top of the stack
-  int last = symbol_table.size()-1;
-  return &symbol_table[last];
-}
-
-bool find(std::string &value) {
-  Function *f = get_function();
-  for(int i=0; i < f->declarations.size(); i++) {
-    Symbol *s = &f->declarations[i];
-    if (s->name == value) {
-      return true;
-    }
-  }
-  return false;
-}
-
-void add_function_to_symbol_table(std::string &value) {
-  Function f; 
-  f.name = value; 
-  symbol_table.push_back(f);
-}
-
-void add_variable_to_symbol_table(std::string &value, Type t) {
-  Symbol s;
-  s.name = value;
-  s.type = t;
-  Function *f = get_function();
-  f->declarations.push_back(s);
-}
-
-void print_symbol_table(void) {
-  printf("symbol table:\n");
-  printf("--------------------\n");
-  for(int i=0; i<symbol_table.size(); i++) {
-    printf("function: %s\n", symbol_table[i].name.c_str());
-    for(int j=0; j<symbol_table[i].declarations.size(); j++) {
-      printf("  locals: %s\n", symbol_table[i].declarations[j].name.c_str());
-    }
-  }
-  printf("--------------------\n");
-}
-
-std::string output_string;
-
-struct CodeNode {
-      std::string code;
-      std::string name;
-      bool arr = false;
-      
-      ~CodeNode(){
-            //write to
-      }
-};
-
 void yyerror(const char *msg);
 
 extern int yylex();
@@ -151,7 +78,7 @@ extern int line;
 extern int col;
 
 
-#line 155 "y.tab.c"
+#line 82 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -246,8 +173,7 @@ extern int yydebug;
     TRUE = 302,
     FALSE = 303,
     IDENT = 304,
-    NUMBER = 305,
-    CODE = 306
+    NUMBER = 305
   };
 #endif
 
@@ -255,17 +181,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 89 "miniL.y"
+#line 16 "miniL.y"
 
   /* put your types here */
   int num_val;
-  char* id_val;
+  char* op_val;
   int line_val;
   int col_val;
-  struct Function func;
-  struct Symbol symb;
 
-#line 269 "y.tab.c"
+#line 193 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -604,16 +528,16 @@ union yyalloc
 #define YYLAST   93
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  52
+#define YYNTOKENS  51
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  19
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  48
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  106
+#define YYNSTATES  105
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   306
+#define YYMAXUTOK   305
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -655,18 +579,18 @@ static const yytype_int8 yytranslate[] =
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
-      45,    46,    47,    48,    49,    50,    51
+      45,    46,    47,    48,    49,    50
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int16 yyrline[] =
+static const yytype_int8 yyrline[] =
 {
-       0,   119,   119,   121,   122,   124,   126,   127,   129,   130,
-     132,   133,   135,   138,   141,   154,   155,   156,   157,   158,
-     161,   162,   163,   164,   166,   166,   168,   169,   171,   177,
-     183,   189,   195,   201,   208,   209,   217,   226,   227,   235,
-     243,   252,   260,   261,   262,   264,   268,   280,   290
+       0,    39,    39,    41,    42,    44,    46,    47,    49,    50,
+      52,    53,    55,    57,    59,    60,    61,    62,    63,    64,
+      65,    66,    67,    68,    70,    70,    72,    73,    75,    76,
+      77,    78,    79,    80,    82,    83,    84,    86,    87,    88,
+      89,    91,    92,    93,    94,    96,    97,    99,   100
 };
 #endif
 
@@ -682,7 +606,7 @@ static const char *const yytname[] =
   "WHILE", "BEGINLOOP", "ENDLOOP", "DO", "READ", "WRITE", "CONTINUE",
   "BREAK", "RETURN", "NOT", "EQ", "NEQ", "LT", "GT", "LTE", "GTE", "ADD",
   "L_PAREN", "R_PAREN", "COMMA", "SUB", "MULT", "DIV", "MOD", "TRUE",
-  "FALSE", "IDENT", "NUMBER", "CODE", "$accept", "program", "Functions",
+  "FALSE", "IDENT", "NUMBER", "$accept", "program", "Functions",
   "Function", "Declarations", "Statements", "Declaration", "Identifiers",
   "Identifier", "Statement", "Bool_Exp", "$@1", "Nots", "Comp",
   "Expression", "Mult_Expr", "Term", "Expressions", "variable", YY_NULLPTR
@@ -699,11 +623,11 @@ static const yytype_int16 yytoknum[] =
      275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
      295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
-     305,   306
+     305
 };
 # endif
 
-#define YYPACT_NINF (-36)
+#define YYPACT_NINF (-56)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -717,17 +641,17 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       3,    -1,    11,   -36,     3,    14,   -36,   -36,    26,    29,
-     -36,    35,    31,    51,   -36,    57,    29,    10,    29,   -36,
-     -36,    28,    58,    16,    59,    54,    18,    55,    56,   -36,
-     -36,    50,    71,    71,   -36,   -36,     0,    65,    72,    60,
-      66,     0,    61,    48,    62,    18,   -36,   -36,   -13,     0,
-     -36,   -36,   -34,   -29,   -36,   -36,    18,     0,   -36,    67,
-      18,    48,     0,    18,    63,     0,    41,     0,     0,     0,
-       0,     0,   -36,   -36,   -36,     8,   -36,    22,    64,    68,
-      42,    44,   -36,   -36,   -36,   -36,   -36,   -36,   -36,    18,
-     -36,   -36,   -36,   -36,   -36,   -36,     0,   -36,   -36,     0,
-     -36,    69,   -36,   -36,   -36,   -36
+       0,     2,     9,   -56,     0,    30,   -56,   -56,    21,    29,
+     -56,    46,    56,    50,   -56,    57,    29,    10,    29,   -56,
+     -56,    51,    59,    19,    60,    55,    13,    58,    61,   -56,
+     -56,    48,    69,    69,   -56,   -56,    -2,    63,    72,    62,
+     -56,    -2,    64,    47,    54,    13,   -56,   -56,   -11,    -2,
+     -56,   -56,   -27,     1,   -56,   -56,    13,    -2,    65,    13,
+      47,    -2,    13,    66,    -2,    41,    -2,    -2,    -2,    -2,
+      -2,   -56,   -56,   -56,    28,   -56,    22,    67,    70,    43,
+      42,   -56,   -56,   -56,   -56,   -56,   -56,   -56,    13,   -56,
+     -56,   -56,   -56,   -56,   -56,    -2,   -56,   -56,    -2,   -56,
+      68,   -56,   -56,   -56,   -56
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -739,27 +663,27 @@ static const yytype_int8 yydefact[] =
       13,     0,     0,     0,    12,     0,     6,     0,     6,     7,
       10,     0,     0,     0,     0,     0,     8,     0,    47,    24,
       24,     0,     0,     0,    21,    22,     0,     0,     0,     0,
-       0,     0,     0,    26,     0,     8,    19,    20,    47,     0,
-      42,    23,    34,    37,    41,     5,     8,     0,    11,     0,
-       8,    26,     0,     8,     0,     0,     0,     0,     0,     0,
-       0,     0,     9,    14,    48,     0,    27,     0,     0,     0,
-      45,     0,    43,    35,    36,    38,    39,    40,    15,     8,
-      28,    29,    30,    31,    32,    33,     0,    17,    24,     0,
-      44,     0,    25,    18,    46,    16
+      11,     0,     0,    26,     0,     8,    19,    20,    47,     0,
+      42,    23,    34,    37,    41,     5,     8,     0,     0,     8,
+      26,     0,     8,     0,     0,     0,     0,     0,     0,     0,
+       0,     9,    14,    48,     0,    27,     0,     0,     0,    45,
+       0,    43,    35,    36,    38,    39,    40,    15,     8,    28,
+      29,    30,    31,    32,    33,     0,    17,    24,     0,    44,
+       0,    25,    18,    46,    16
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -36,   -36,    83,   -36,    -4,   -35,   -36,   -36,   -36,   -36,
-     -30,   -36,    32,   -36,   -23,    -6,   -18,    -7,   -25
+     -56,   -56,    82,   -56,     3,   -34,   -56,   -56,   -56,   -56,
+     -30,   -56,    27,   -56,   -31,   -15,   -55,   -10,   -25
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
       -1,     2,     3,     4,    11,    37,    12,    13,    14,    38,
-      42,    43,    62,    96,    80,    52,    53,    81,    54
+      42,    43,    61,    95,    79,    52,    53,    80,    54
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -767,64 +691,64 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      44,    39,    41,     5,    48,    67,     1,    46,    47,    68,
-      64,     6,    19,    51,    22,    69,    70,    71,    59,     8,
-      39,    72,    28,    20,    21,    75,    66,    65,    78,    88,
-      89,    39,     9,    10,    73,    39,    16,    29,    39,    77,
-      49,    30,    15,    23,    31,    32,    33,    34,    35,    36,
-      50,    85,    86,    87,   101,    90,    91,    92,    93,    94,
-      95,    83,    84,    17,    39,    18,    25,    24,   103,    26,
-      27,    41,    40,   102,    45,    28,    55,    56,    57,    58,
-      61,    60,    82,    74,    99,   100,    63,     7,    79,    97,
-     105,    98,   104,    76
+      44,    39,    48,     1,    41,    51,     5,    46,    47,     6,
+      58,    63,    66,    84,    85,    86,    67,    28,    65,    19,
+      39,    22,    71,    20,    21,    74,    72,     9,    77,    64,
+      76,    39,    29,    10,    39,     8,    30,    39,    49,    31,
+      32,    33,    34,    35,    36,    68,    69,    70,    50,    87,
+      88,    82,    83,    15,   100,    89,    90,    91,    92,    93,
+      94,    16,    17,    39,   101,    18,    23,   102,    24,    25,
+      26,    27,    45,    28,    55,    40,    41,    56,    62,    60,
+      57,    73,    81,    99,    59,    98,     7,    75,   103,   104,
+       0,    78,    96,    97
 };
 
 static const yytype_int8 yycheck[] =
 {
-      30,    26,    15,     4,     4,    39,     3,    32,    33,    43,
-      45,     0,    16,    36,    18,    44,    45,    46,    41,     5,
-      45,    56,     4,    13,    14,    60,    49,    40,    63,    21,
-      22,    56,     6,     4,    57,    60,     5,    19,    63,    62,
-      40,    23,     7,    15,    26,    27,    28,    29,    30,    31,
-      50,    69,    70,    71,    89,    33,    34,    35,    36,    37,
-      38,    67,    68,    12,    89,     8,    50,     9,    98,    10,
-      16,    15,    17,    96,    24,     4,    11,     5,    18,    13,
-      32,    20,    41,    16,    42,    41,    24,     4,    25,    25,
-      21,    23,    99,    61
+      30,    26,     4,     3,    15,    36,     4,    32,    33,     0,
+      41,    45,    39,    68,    69,    70,    43,     4,    49,    16,
+      45,    18,    56,    13,    14,    59,    57,     6,    62,    40,
+      61,    56,    19,     4,    59,     5,    23,    62,    40,    26,
+      27,    28,    29,    30,    31,    44,    45,    46,    50,    21,
+      22,    66,    67,     7,    88,    33,    34,    35,    36,    37,
+      38,     5,    12,    88,    95,     8,    15,    97,     9,    50,
+      10,    16,    24,     4,    11,    17,    15,     5,    24,    32,
+      18,    16,    41,    41,    20,    42,     4,    60,    98,    21,
+      -1,    25,    25,    23
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    53,    54,    55,     4,     0,    54,     5,     6,
-       4,    56,    58,    59,    60,     7,     5,    12,     8,    56,
-      13,    14,    56,    15,     9,    50,    10,    16,     4,    19,
-      23,    26,    27,    28,    29,    30,    31,    57,    61,    70,
-      17,    15,    62,    63,    62,    24,    70,    70,     4,    40,
-      50,    66,    67,    68,    70,    11,     5,    18,    13,    66,
-      20,    32,    64,    24,    57,    40,    66,    39,    43,    44,
-      45,    46,    57,    66,    16,    57,    64,    66,    57,    25,
-      66,    69,    41,    67,    67,    68,    68,    68,    21,    22,
-      33,    34,    35,    36,    37,    38,    65,    25,    23,    42,
-      41,    57,    66,    62,    69,    21
+       0,     3,    52,    53,    54,     4,     0,    53,     5,     6,
+       4,    55,    57,    58,    59,     7,     5,    12,     8,    55,
+      13,    14,    55,    15,     9,    50,    10,    16,     4,    19,
+      23,    26,    27,    28,    29,    30,    31,    56,    60,    69,
+      17,    15,    61,    62,    61,    24,    69,    69,     4,    40,
+      50,    65,    66,    67,    69,    11,     5,    18,    65,    20,
+      32,    63,    24,    56,    40,    65,    39,    43,    44,    45,
+      46,    56,    65,    16,    56,    63,    65,    56,    25,    65,
+      68,    41,    66,    66,    67,    67,    67,    21,    22,    33,
+      34,    35,    36,    37,    38,    64,    25,    23,    42,    41,
+      56,    65,    61,    68,    21
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    52,    53,    54,    54,    55,    56,    56,    57,    57,
-      58,    58,    59,    60,    61,    61,    61,    61,    61,    61,
-      61,    61,    61,    61,    63,    62,    64,    64,    65,    65,
-      65,    65,    65,    65,    66,    66,    66,    67,    67,    67,
-      67,    68,    68,    68,    68,    69,    69,    70,    70
+       0,    51,    52,    53,    53,    54,    55,    55,    56,    56,
+      57,    57,    58,    59,    60,    60,    60,    60,    60,    60,
+      60,    60,    60,    60,    62,    61,    63,    63,    64,    64,
+      64,    64,    64,    64,    65,    65,    65,    66,    66,    66,
+      66,    67,    67,    67,    67,    68,    68,    69,    69
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     1,     0,     2,    12,     0,     3,     0,     3,
-       3,     8,     1,     1,     3,     5,     7,     5,     6,     2,
+       3,     7,     1,     1,     3,     5,     7,     5,     6,     2,
        2,     1,     1,     2,     0,     5,     0,     2,     1,     1,
        1,     1,     1,     1,     1,     3,     3,     1,     3,     3,
        3,     1,     1,     3,     4,     1,     3,     1,     4
@@ -1618,408 +1542,289 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 119 "miniL.y"
+#line 39 "miniL.y"
                      {printf("program -> functions\n");}
-#line 1624 "y.tab.c"
+#line 1548 "y.tab.c"
     break;
 
   case 3:
-#line 121 "miniL.y"
+#line 41 "miniL.y"
               {printf("Functions -> epsilon\n");}
-#line 1630 "y.tab.c"
+#line 1554 "y.tab.c"
     break;
 
   case 4:
-#line 122 "miniL.y"
+#line 42 "miniL.y"
                              {printf("Functions -> Function Functions\n");}
-#line 1636 "y.tab.c"
+#line 1560 "y.tab.c"
     break;
 
   case 5:
-#line 124 "miniL.y"
+#line 44 "miniL.y"
                                                                                                                                                    {printf("Function -> FUNCTION IDENTIFIER SEMICOLON BEGIN_PARAMS Declarations END_PARAMS BEGIN_LOCALS Declarations END_LOCALS BEGIN_BODY Statements END_BODY\n");}
-#line 1642 "y.tab.c"
+#line 1566 "y.tab.c"
     break;
 
   case 6:
-#line 126 "miniL.y"
+#line 46 "miniL.y"
                  {printf("Declarations -> epsilon\n");}
-#line 1648 "y.tab.c"
+#line 1572 "y.tab.c"
     break;
 
   case 7:
-#line 127 "miniL.y"
+#line 47 "miniL.y"
                                              {printf("Declarations -> Declaration SEMICOLON Declarations\n");}
-#line 1654 "y.tab.c"
+#line 1578 "y.tab.c"
     break;
 
   case 8:
-#line 129 "miniL.y"
+#line 49 "miniL.y"
               {printf("Statements -> Epsilon\n");}
-#line 1660 "y.tab.c"
+#line 1584 "y.tab.c"
     break;
 
   case 9:
-#line 130 "miniL.y"
+#line 50 "miniL.y"
                                                {printf("Statements -> Statement SEMICOLON Statements\n");}
-#line 1666 "y.tab.c"
+#line 1590 "y.tab.c"
     break;
 
   case 10:
-#line 132 "miniL.y"
+#line 52 "miniL.y"
                                          {printf("Declaration -> Identifiers COLON INTEGER\n");}
-#line 1672 "y.tab.c"
+#line 1596 "y.tab.c"
     break;
 
   case 11:
-#line 133 "miniL.y"
-                                                                                           {printf("Declaration -> IDENTIFIER COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER\n");}
-#line 1678 "y.tab.c"
+#line 53 "miniL.y"
+                                                                                    {printf("Declaration -> IDENTIFIER COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF\n");}
+#line 1602 "y.tab.c"
     break;
 
   case 12:
-#line 135 "miniL.y"
-                          {printf("Identifiers -> Identifier\n");
-              }
-#line 1685 "y.tab.c"
+#line 55 "miniL.y"
+                          {printf("Identifiers -> Identifier\n");}
+#line 1608 "y.tab.c"
     break;
 
   case 13:
-#line 138 "miniL.y"
-                         {printf("Identifier -> IDENT %s\n", yylval.id_val);
-            }
-#line 1692 "y.tab.c"
+#line 57 "miniL.y"
+                         {printf("Identifier -> IDENT %s\n", yylval.id_val);}
+#line 1614 "y.tab.c"
     break;
 
   case 14:
-#line 141 "miniL.y"
-                                        {
-                  std::string var_name = (yyvsp[-2].symb);
-                  std::string error;
-                  if (!find(var_name)) {
-                        yyerror(error.c_str());
-                  }
-
-                  CodeNode *node = new CodeNode;
-                  node->code = (yyvsp[0].symb)->code; 
-                  node->code += std::string("= ") + var_name + std::string(", ") + (yyvsp[0].symb)->name + std::string("\n");
-                  node->name = var_name;
-                  (yyval.func) = node;
-            }
-#line 1710 "y.tab.c"
+#line 59 "miniL.y"
+                                        {printf("Statement -> variable ASSIGN Expression\n");}
+#line 1620 "y.tab.c"
     break;
 
   case 15:
-#line 154 "miniL.y"
+#line 60 "miniL.y"
                                                  {printf("Statement -> IF Bool_Exp THEN Statements ENDIF\n");}
-#line 1716 "y.tab.c"
+#line 1626 "y.tab.c"
     break;
 
   case 16:
-#line 155 "miniL.y"
+#line 61 "miniL.y"
                                                                  {printf("Statement -> IF Bool_Exp THEN Statements ELSE Statements ENDIF\n");}
-#line 1722 "y.tab.c"
+#line 1632 "y.tab.c"
     break;
 
   case 17:
-#line 156 "miniL.y"
+#line 62 "miniL.y"
                                                            {printf("Statement -> WHILE Bool_Exp BEGINLOOP Statements ENDLOOP\n");}
-#line 1728 "y.tab.c"
+#line 1638 "y.tab.c"
     break;
 
   case 18:
-#line 157 "miniL.y"
+#line 63 "miniL.y"
                                                               {printf("Statement -> DO BEGINLOOP Statements ENDLOOP WHILE Bool_Exp\n");}
-#line 1734 "y.tab.c"
+#line 1644 "y.tab.c"
     break;
 
   case 19:
-#line 158 "miniL.y"
-                             {
-               
-             }
-#line 1742 "y.tab.c"
+#line 64 "miniL.y"
+                             {printf("Statement -> READ variable\n");}
+#line 1650 "y.tab.c"
     break;
 
   case 20:
-#line 161 "miniL.y"
+#line 65 "miniL.y"
                               {printf("Statement -> WRITE variable\n");}
-#line 1748 "y.tab.c"
+#line 1656 "y.tab.c"
     break;
 
   case 21:
-#line 162 "miniL.y"
+#line 66 "miniL.y"
                         {printf("Statement -> CONTINUE\n");}
-#line 1754 "y.tab.c"
+#line 1662 "y.tab.c"
     break;
 
   case 22:
-#line 163 "miniL.y"
+#line 67 "miniL.y"
                      {printf("Statement -> BREAK\n");}
-#line 1760 "y.tab.c"
+#line 1668 "y.tab.c"
     break;
 
   case 23:
-#line 164 "miniL.y"
+#line 68 "miniL.y"
                                  {printf("Statement -> RETURN Expression\n");}
-#line 1766 "y.tab.c"
+#line 1674 "y.tab.c"
     break;
 
   case 24:
-#line 166 "miniL.y"
+#line 70 "miniL.y"
             {printf("boolexp flag\n");}
-#line 1772 "y.tab.c"
+#line 1680 "y.tab.c"
     break;
 
   case 25:
-#line 166 "miniL.y"
+#line 70 "miniL.y"
                                                                         {printf("Bool_Exp -> Nots Expression Comp Expression\n");}
-#line 1778 "y.tab.c"
+#line 1686 "y.tab.c"
     break;
 
   case 26:
-#line 168 "miniL.y"
+#line 72 "miniL.y"
          {printf("Nots -> epsilon\n");}
-#line 1784 "y.tab.c"
+#line 1692 "y.tab.c"
     break;
 
   case 27:
-#line 169 "miniL.y"
+#line 73 "miniL.y"
                    {printf("Nots -> NOT Nots\n");}
-#line 1790 "y.tab.c"
+#line 1698 "y.tab.c"
     break;
 
   case 28:
-#line 171 "miniL.y"
-           {CodeNode *node = new CodeNode;
-            node->code = "";
-            node->name = "== ";
-
-            (yyval.symb) = node;
-            }
-#line 1801 "y.tab.c"
+#line 75 "miniL.y"
+           {printf("Comp -> EQ\n");}
+#line 1704 "y.tab.c"
     break;
 
   case 29:
-#line 177 "miniL.y"
-              {CodeNode *node = new CodeNode;
-            node->code = "";
-            node->name = "!= ";
-
-            (yyval.symb) = node;
-            }
-#line 1812 "y.tab.c"
+#line 76 "miniL.y"
+              {printf("Comp -> NEQ\n");}
+#line 1710 "y.tab.c"
     break;
 
   case 30:
-#line 183 "miniL.y"
-             {CodeNode *node = new CodeNode;
-            node->code = "< ";
-            node->name = "< ";
-
-            (yyval.symb) = node;
-            }
-#line 1823 "y.tab.c"
+#line 77 "miniL.y"
+             {printf("Comp -> LT\n");}
+#line 1716 "y.tab.c"
     break;
 
   case 31:
-#line 189 "miniL.y"
-             {CodeNode *node = new CodeNode;
-            node->code = "";
-            node->name = "> ";
-
-            (yyval.symb) = node;
-            }
-#line 1834 "y.tab.c"
+#line 78 "miniL.y"
+             {printf("Comp -> GT\n");}
+#line 1722 "y.tab.c"
     break;
 
   case 32:
-#line 195 "miniL.y"
-              {CodeNode *node = new CodeNode;
-            node->code = "";
-            node->name = "<= ";
-
-            (yyval.symb) = node;
-            }
-#line 1845 "y.tab.c"
+#line 79 "miniL.y"
+              {printf("Comp -> LTE\n");}
+#line 1728 "y.tab.c"
     break;
 
   case 33:
-#line 201 "miniL.y"
-              {CodeNode *node = new CodeNode;
-            node->code = "";
-            node->name = ">= ";
-
-            (yyval.symb) = node;
-            }
-#line 1856 "y.tab.c"
+#line 80 "miniL.y"
+              {printf("Comp -> GTE\n");}
+#line 1734 "y.tab.c"
     break;
 
   case 34:
-#line 208 "miniL.y"
+#line 82 "miniL.y"
                         {printf("Expression -> Mult_Expr\n");}
-#line 1862 "y.tab.c"
+#line 1740 "y.tab.c"
     break;
 
   case 35:
-#line 209 "miniL.y"
-                                        {
-                    std::string temp = create_temp();
-                    CodeNode *node = new CodeNode;
-                    node->code = (yyvsp[-2].symb)->code + (yyvsp[0].symb)->code + decl_temp_code(temp);
-                    node->code += std::string("+ ") + temp + std::strings(", ") + (yyvsp[-2].symb)->name + std::string(", ") + (yyvsp[0].symb)->name + std::string("\n");
-                    node->name = temp;
-                    (yyval.symb) = node;
-              }
-#line 1875 "y.tab.c"
+#line 83 "miniL.y"
+                                        {printf("Expression -> Mult_Expr ADD Mult_Expr\n");}
+#line 1746 "y.tab.c"
     break;
 
   case 36:
-#line 217 "miniL.y"
-                                        {
-                    std::string temp = create_temp();
-                    CodeNode *node = new CodeNode;
-                    node->code = (yyvsp[-2].symb)->code + (yyvsp[0].symb)->code + decl_temp_code(temp);
-                    node->code += std::string("- ") + temp + std::strings(", ") + (yyvsp[-2].symb)->name + std::string(", ") + (yyvsp[0].symb)->name + std::string("\n");
-                    node->name = temp;
-                    (yyval.symb) = node;
-              }
-#line 1888 "y.tab.c"
+#line 84 "miniL.y"
+                                        {printf("Expression -> Mult_Expr SUB Mult_Expr\n");}
+#line 1752 "y.tab.c"
     break;
 
   case 37:
-#line 226 "miniL.y"
+#line 86 "miniL.y"
                   {printf("Mult_Expr -> Term\n");}
-#line 1894 "y.tab.c"
+#line 1758 "y.tab.c"
     break;
 
   case 38:
-#line 227 "miniL.y"
-                              {
-                    std::string temp = create_temp();
-                    CodeNode *node = new CodeNode;
-                    node->code = (yyvsp[-2].symb)->code + (yyvsp[0].symb)->code + decl_temp_code(temp);
-                    node->code += std::string("* ") + temp + std::strings(", ") + (yyvsp[-2].symb)->name + std::string(", ") + (yyvsp[0].symb)->name + std::string("\n");
-                    node->name = temp;
-                    (yyval.symb) = node;
-              }
-#line 1907 "y.tab.c"
+#line 87 "miniL.y"
+                              {printf("Mult_Expr -> Term MULT Term\n");}
+#line 1764 "y.tab.c"
     break;
 
   case 39:
-#line 235 "miniL.y"
-                             {
-                    std::string temp = create_temp();
-                    CodeNode *node = new CodeNode;
-                    node->code = (yyvsp[-2].symb)->code + (yyvsp[0].symb)->code + decl_temp_code(temp);
-                    node->code += std::string("/ ") + temp + std::strings(", ") + (yyvsp[-2].symb)->name + std::string(", ") + (yyvsp[0].symb)->name + std::string("\n");
-                    node->name = temp;
-                    (yyval.symb) = node;
-              }
-#line 1920 "y.tab.c"
+#line 88 "miniL.y"
+                             {printf("Mult_Expr -> Term DIV Term\n");}
+#line 1770 "y.tab.c"
     break;
 
   case 40:
-#line 243 "miniL.y"
-                             {
-                    std::string temp = create_temp();
-                    CodeNode *node = new CodeNode;
-                    node->code = (yyvsp[-2].symb)->code + (yyvsp[0].symb)->code + decl_temp_code(temp);
-                    node->code += std::string("% ") + temp + std::strings(", ") + (yyvsp[-2].symb)->name + std::string(", ") + (yyvsp[0].symb)->name + std::string("\n");
-                    node->name = temp;
-                    (yyval.symb) = node;
-              }
-#line 1933 "y.tab.c"
+#line 89 "miniL.y"
+                             {printf("Mult_Expr -> Term MOD Term\n");}
+#line 1776 "y.tab.c"
     break;
 
   case 41:
-#line 252 "miniL.y"
-                 {
-    std::string temp;
-    std::string temp_name = create_temp();
-
-    temp += (yyvsp[0].symb)->code;
-    add_variable_to_symbol_table(temp,(yyvsp[0].symb)->type);
-
-    }
-#line 1946 "y.tab.c"
+#line 91 "miniL.y"
+                 {printf("Term -> variable\n");}
+#line 1782 "y.tab.c"
     break;
 
   case 42:
-#line 260 "miniL.y"
+#line 92 "miniL.y"
                  {printf("Term -> NUMBER\n");}
-#line 1952 "y.tab.c"
+#line 1788 "y.tab.c"
     break;
 
   case 43:
-#line 261 "miniL.y"
+#line 93 "miniL.y"
                                      {printf("Term -> L_PAREN Expression R_PAREN\n");}
-#line 1958 "y.tab.c"
+#line 1794 "y.tab.c"
     break;
 
   case 44:
-#line 262 "miniL.y"
+#line 94 "miniL.y"
                                                  {printf("Term -> IDENTIFIER L_PAREN Expressions R_PAREN\n");}
-#line 1964 "y.tab.c"
+#line 1800 "y.tab.c"
     break;
 
   case 45:
-#line 264 "miniL.y"
-                          {
-      printf("Expressions -> Expression\n");
-      (yyval.symb) = (yyvsp[0].symb);
-    }
-#line 1973 "y.tab.c"
+#line 96 "miniL.y"
+                          {printf("Expressions -> Expression\n");}
+#line 1806 "y.tab.c"
     break;
 
   case 46:
-#line 268 "miniL.y"
-                                             {
-                printf("Expressions -> Expression COMMA Expressions\n");
-                std::string code_temp;
-                std::string name_temp;
-
-                code_temp += (yyvsp[-2].symb)->code + std::string(", ") + (yyvsp[0].symb)->code + std::string("\n");
-                name_temp += (yyvsp[-2].symb)->name + std::string(", ") + (yyvsp[0].symb)->name + std::string("\n");
-
-                (yyval.symb) = node;
-
-              }
-#line 1989 "y.tab.c"
+#line 97 "miniL.y"
+                                             {printf("Expressions -> Expression COMMA Expressions\n");}
+#line 1812 "y.tab.c"
     break;
 
   case 47:
-#line 280 "miniL.y"
-                       {
-                  CodeNode *node = new CodeNode;
-                  node->code = "";
-                  node->name = yylval.id_val;
-                  std::string error;
-                  if (!find(node->name, INTEGER, error)) {
-                        yyerror(error.c_str());
-                  }
-                  (yyval.symb) = node;
-            }
-#line 2004 "y.tab.c"
+#line 99 "miniL.y"
+                       {printf("variable -> IDENTIFIER\n");}
+#line 1818 "y.tab.c"
     break;
 
   case 48:
-#line 290 "miniL.y"
-                                                                      {
-                  CodeNode *node = new CodeNode;
-                  node->code = (yyvsp[-1].symb).code;
-                  std::string temp = yylval.id_val;
-                  
-                  temp += std::string(", ") + std::string((yyvsp[-1].symb).name);
-                  node->name = temp;
-                  (yyval.symb) = node;
-
-                  }
-#line 2019 "y.tab.c"
+#line 100 "miniL.y"
+                                                                      {printf("variable -> IDENTIFIER L_SQUARE_BRACKET Expression R_SQUARE_BRACKET\n");}
+#line 1824 "y.tab.c"
     break;
 
 
-#line 2023 "y.tab.c"
+#line 1828 "y.tab.c"
 
       default: break;
     }
@@ -2257,7 +2062,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 300 "miniL.y"
+#line 101 "miniL.y"
  
 
 int main(int argc, char **argv) {
